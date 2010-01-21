@@ -28,6 +28,7 @@ class FilterFramework::Filter < ActiveRecord::Base
   belongs_to :filter_group, :class_name => "FilterFramework::FilterGroup"
   def matches?(obj)
     return false if ! obj.respond_to? self.attribute
+    # evals are pretty nasty, in general. Is there a better way to do this?
     return eval("obj.#{self.attribute} #{Operator.text_value(self.operator)} #{self.condition}")
   end
 end
