@@ -4,8 +4,15 @@ class FilterFramework::FilterSet < ActiveRecord::Base
   has_many :filter_groups, :class_name => "FilterFramework::FilterGroup"
   
   # TODO support passing in a array or hash of objects
-  def matches?(obj)
-    filter_groups.each do |fg|
+  def matches?(obj, nil_ok = false)
+    if obj == nil
+      return true if nil_ok
+      return false
+    end
+    
+    applicable_groups = filter_groups.select{|fg| fg.filtered_class.constantize == obj.class}
+    return true unless applicable_groups.size > 0
+    applicable_groups.each do |fg|
       return false unless fg.matches?(obj)
     end
     return true
